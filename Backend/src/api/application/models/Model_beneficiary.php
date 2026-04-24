@@ -443,37 +443,24 @@ class Model_Beneficiary extends CI_Model
                 $ali = strtoupper($data['data']['alias']);
                 /* beneficiary_email was removed. SELECT query updated
                  on 16-Feb-2020 by @Vibhav */
-                $sql = "SELECT
-                    beneficiary_alias,
-                    beneficiary_account_no,
-                    bank_code,
-                    created_at
-                FROM
-                    beneficiary_details
-                WHERE
-                    beneficiary_alias = '$ali'
-                    AND
-                    user_id_fk = " . $result['user_id_fk'];
-                $stmt = $this->db->query($sql);
-                $error = $this->db->error();
-                /*
                 $stmt = $this->db->query(
                     "SELECT
                         beneficiary_alias,
-                        beneficiary_email,
                         beneficiary_account_no,
                         bank_code,
                         created_at
                     FROM
                         beneficiary_details
                     WHERE
-                        user_id_fk = ? AND beneficiary_alias = ?",
+                        beneficiary_alias = ?
+                        AND
+                        user_id_fk = ?",
                     array(
-                        $result['user_id_fk'],
-                        strtoupper($data['data']['alias'])
+                        $ali,
+                        $result['user_id_fk']
                     )
                 );
-                */
+                $error = $this->db->error();
                 if ($error['code'] == 0) {
                     $result = $stmt->row_array();
                     /* beneficiary_email was removed. return array updated
@@ -481,17 +468,17 @@ class Model_Beneficiary extends CI_Model
                     return array(
                         "status_code" => "ALLOK2",
                         "data" => array(
-                            "alias" => $result['beneficiary_alias'],
-                            "accountNumber" => $result['beneficiary_account_no'],
-                            "ifscCode" => $result['bank_code'],
-                            "creationDateTime" => $result['created_at']
+                            "alias" => isset($result['beneficiary_alias']) ? $result['beneficiary_alias'] : "NULL",
+                            "accountNumber" => isset($result['beneficiary_account_no']) ? $result['beneficiary_account_no'] : "NULL",
+                            "ifscCode" => isset($result['bank_code']) ? $result['bank_code'] : "NULL",
+                            "creationDateTime" => isset($result['created_at']) ? $result['created_at'] : "NULL"
                         )
                     );
                 } else {
                     return array(
                         "status_code" => "ALLOK2",
                         "data" => array(
-                            "alias" => $error['message'],
+                            "alias" => "NULL",
                             "email" => "NULL",
                             "accountNumber" => "NULL",
                             "ifscCode" => "NULL",
