@@ -126,6 +126,11 @@ class Model_Passwd extends CI_Model
             if ($result['verified'] != '1') {
                 return $status::InvalidOtpPurpose;
             }
+            // Ensure the OTP belongs to the same account being reset.
+            // Do not rely on the victim account lookup alone.
+            if ($result['id'] != $detailid) {
+                return $status::InvalidOtpResponse;
+            }
             // find user.id_pk
             $stmt = $this->db->query(
                 "SELECT u.id_pk as userid
@@ -135,8 +140,6 @@ class Model_Passwd extends CI_Model
                 WHERE d.id_pk = ?",
                 array($detailid)
             );
-            // d.id_pk = ?", array($result['id']));
-            // replace the line 128 with 131 to patch account takeover
             $result = $stmt->row_array();
             if (!isset($result['userid'])) {
                 return $status::DBSyncError;
