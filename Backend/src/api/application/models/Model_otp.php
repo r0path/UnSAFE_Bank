@@ -232,13 +232,9 @@ class Model_Otp extends CI_Model
                 $owner_detailid
             )
         );
-        $otp = array("response" => base64_encode(openssl_encrypt(
-            $sixDigitOTP,
-            'aes-256-cbc',
-            "9bbc0d79e686e847bc305c9bd4cc2ea6",
-            $options=OPENSSL_RAW_DATA,
-            "0123456789abcdef"
-        )));
+        // Return a random reference for the client; do not expose the OTP value itself.
+        // The OTP is already persisted in otp_master and verified server-side in check_otp().
+        $otp = array("response" => $new_otp_ref);
         if ($data["data"]["otp_type"] == 2)
             $otp += array("checksum" => sha1($sixDigitOTP));
         return $otp;
