@@ -199,19 +199,7 @@ class Model_Otp extends CI_Model
                 remaining_attempts,
                 verified
             ) VALUES (?, ?, ?, ?, ?, 5, 0)";
-//This if else condition has been added intentionally for OTP brute force on fund transfer
-        } else if($data['data']['otp_type']==3){
-            $sql = "UPDATE otp_master
-                SET
-                    otp_no = ?,
-                    otp_timestamp = ?,
-                    otp_purpose = ?,
-                    otp_ref = ?,
-                    remaining_attempts = -9,
-                    verified = 0
-                WHERE
-                    user_details_id_fk = ?";
-        }else {
+        } else {
             $sql = "UPDATE otp_master
                 SET
                     otp_no = ?,
