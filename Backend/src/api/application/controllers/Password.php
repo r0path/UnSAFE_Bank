@@ -33,16 +33,16 @@ class Password extends CI_Controller
 						time(),
 						(object)array()
 					);
-				else
+				else {
+					$this->Model_otp->generate($account_id, $parsed);
 					echo prepare_response(
 						"Success",
 						$status::OtpGenerated['status_code'],
 						$status::OtpGenerated['message'],
 						time(),
-						(object) $this->Model_otp->generate(
-							$account_id, $parsed
-						)
+						(object)array()
 					);
+				}
 			} else
 				echo prepare_response(
 					"Failed",
