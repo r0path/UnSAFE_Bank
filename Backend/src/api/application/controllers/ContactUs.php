@@ -49,18 +49,37 @@ class ContactUs extends CI_Controller
 
             $xmlfile = file_get_contents('php://input');
             $dom = new DOMDocument();
-            $dom->loadXML($xmlfile, LIBXML_NOENT | LIBXML_DTDLOAD);
-            $xmlData = simplexml_import_dom($dom);
-            if (isset($xmlData->name)) {
-                $name = $xmlData->name;
-                $message = 'Thanks for contacting us ' . $name . '. We will get back to you soon!';
-                echo prepare_response(
-                    "Success",
-                    "CTS001",
-                    $message,
-                    time(),
-                    array()
-                );
+            $previousEntityLoader = null;
+            if (function_exists('libxml_disable_entity_loader')) {
+                $previousEntityLoader = libxml_disable_entity_loader(true);
+            }
+            $previousUseErrors = libxml_use_internal_errors(true);
+            $loaded = $dom->loadXML($xmlfile, LIBXML_NONET);
+            if (function_exists('libxml_disable_entity_loader') && $previousEntityLoader !== null) {
+                libxml_disable_entity_loader($previousEntityLoader);
+            }
+            libxml_use_internal_errors($previousUseErrors);
+            if ($loaded) {
+                $xmlData = simplexml_import_dom($dom);
+                if (isset($xmlData->name)) {
+                    $name = $xmlData->name;
+                    $message = 'Thanks for contacting us ' . $name . '. We will get back to you soon!';
+                    echo prepare_response(
+                        "Success",
+                        "CTS001",
+                        $message,
+                        time(),
+                        array()
+                    );
+                } else {
+                    echo prepare_response(
+                        "Failed",
+                        "CTS002",
+                        "Error while submitting the response",
+                        time(),
+                        array()
+                    );
+                }
             } else {
                 echo prepare_response(
                     "Failed",
