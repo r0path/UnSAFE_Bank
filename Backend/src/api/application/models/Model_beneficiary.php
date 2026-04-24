@@ -673,14 +673,15 @@ class Model_Beneficiary extends CI_Model
                         $payeeid = $payee['id_pk'];
                         $payee_balance = floatval($payee['account_balance']);
                         $payee_account = $payee['account_no'];
+                        // validate and normalize transfer amount
+                        $amount = floatval(number_format($data['data']['amount'], 2, ".", ""));
+                        if ($amount < 1.00) {
+                            return $status::MinTransactionNotMet;
+                        }
+
                         // check if balance is sufficient
-                        if ($payer_balance >= floatval($data['data']['amount'])) {
+                        if ($payer_balance >= $amount) {
                             // fund transfer
-                            $amount = floatval(number_format($data['data']['amount'], 2, ".", ""));
-                            //commenting to make -ve transactions
-                            // if ($amount < 1.00) {
-                            //     return $status::MinTransactionNotMet;
-                            // }
                             $payee_balance += $amount;
                             $payer_balance -= $amount;
                             $sql = "UPDATE account_details SET account_balance = ? WHERE id_pk = ?";
