@@ -85,6 +85,6 @@ enum urlPathsEnum:String{
     case connectionCheck = ""
     
     var path:String{
-        return "http://\(globalIP)/api/" + self.rawValue
+        return "https://\(globalIP)/api/" + self.rawValue
     }
 }
