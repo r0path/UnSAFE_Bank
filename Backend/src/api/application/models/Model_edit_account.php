@@ -8,10 +8,29 @@ class Model_edit_account extends CI_Model
     public function urlExists($url = NULL)
     {
         if ($url == NULL) return false;
+
+        $parsedUrl = parse_url($url);
+        if ($parsedUrl === false || !isset($parsedUrl['scheme']) || !isset($parsedUrl['host'])) {
+            return false;
+        }
+
+        $allowedSchemes = array('http', 'https');
+        if (!in_array(strtolower($parsedUrl['scheme']), $allowedSchemes, true)) {
+            return false;
+        }
+
+        $host = strtolower($parsedUrl['host']);
+        if ($host === 'localhost' || $host === '127.0.0.1' || $host === '::1') {
+            return false;
+        }
+
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_TIMEOUT, 3);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+        curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
+        curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS);
 
         $data = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
