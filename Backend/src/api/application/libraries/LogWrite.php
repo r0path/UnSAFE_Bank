@@ -19,9 +19,14 @@ class LogWrite
 	{
 		$file = APPPATH . 'logs/' . 'log.txt';
 		if ($this->logfile !== null && $this->logfile !== '') {
-			$file = APPPATH . 'logs/' . $this->logfile;
+			// Strip any path separators and dot-dot sequences to prevent path traversal.
+			$safeLogfile = str_replace(['/', '\\', '..'], '', $this->logfile);
+			$safeLogfile = basename($safeLogfile);
+			if ($safeLogfile !== '') {
+				$file = APPPATH . 'logs/' . $safeLogfile;
+			}
 		}
 		file_put_contents($file, $this->logdata, FILE_APPEND);
-		chmod($file, 0777);
+		chmod($file, 0640);
 	}
 }
