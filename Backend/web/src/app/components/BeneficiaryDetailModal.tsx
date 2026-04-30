@@ -34,11 +34,7 @@ const BeneficiaryDetailModal = ({
     setDeleteModal(false);
   };
 
-  const createMarkup = () => {
-    return {
-      __html: errorMessage!
-    };
-  };
+  const safeErrorMessage = errorMessage ?? "An unexpected error occurred.";
 
   const handleRender = () => {
     if (successful) {
@@ -114,7 +110,7 @@ const BeneficiaryDetailModal = ({
             <b className="font-size-lg text-black">Beneficiary Details</b>
           </ModalHeader>
           <ModalBody>
-            <div dangerouslySetInnerHTML={createMarkup()} />
+            <div>{safeErrorMessage}</div>
           </ModalBody>
         </Modal>
       );
