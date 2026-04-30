@@ -112,10 +112,8 @@ const UserProfilePage = () => {
 
       return `${da}-${mo}-${ye}`;
     };
-    const createMarkup = () => {
-      return {
-        __html: address as string
-      };
+    const renderAddress = () => {
+      return address as string;
     };
 
     return (
@@ -226,7 +224,7 @@ const UserProfilePage = () => {
                       <Row>
                         <Col md="12">
                           <label>Address</label>
-                          <h5 dangerouslySetInnerHTML={createMarkup()} />
+                          <h5>{renderAddress()}</h5>
                         </Col>
                       </Row>
                     </FormGroup>
