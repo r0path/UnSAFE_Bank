@@ -18,9 +18,15 @@ const AboutPage = () => {
       })
       .catch(res => toast.error("Backend Server is unresponsive.", { position: "top-center" }));
   }, []);
+  const escapeHtml = (input: string) => {
+    const div = document.createElement("div");
+    div.textContent = input;
+    return div.innerHTML;
+  };
+
   const createMarkup = () => {
     return {
-      __html: data!
+      __html: escapeHtml(data)
     };
   };
   if (!data) {
