@@ -35,11 +35,21 @@ class Model_My_Account extends CI_Model
         $this->load->helper('request_response');
         $this->load->helper('session');
         $status = new status_codes();
-        if (is_valid_session($data['token']) == null) {
+        $session_account_id_pk = is_valid_session($data['token']);
+        if ($session_account_id_pk == null) {
             return $status::InvalidSession;
         }
         // validate accountid with userid to prevent IDOR
         $userid = $data['data']['userid'];
+        $session_user = $this->db->query(
+            "SELECT u.cust_id FROM account_details AS a
+             LEFT JOIN user AS u ON a.user_id_fk = u.id_pk
+             WHERE a.id_pk = ?",
+            array($session_account_id_pk)
+        )->row_array();
+        if (empty($session_user) || $session_user['cust_id'] !== $userid) {
+            return $status::InvalidSession;
+        }
         $accountid = $this->db->query(
             "SELECT
                 a.id_pk
