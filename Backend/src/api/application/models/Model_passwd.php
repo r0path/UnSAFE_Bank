@@ -180,14 +180,13 @@ class Model_Passwd extends CI_Model
                 return $status::DBSyncError;
             } else {
                 $userid = $stmt['user_id_fk'];
-                /* For Insecure Change Password functionality
-                if (!isset($this->db->query(
-                    "SELECT cust_id FROM user WHERE id_pk = ? and password =?",
+                $current = $this->db->query(
+                    "SELECT cust_id FROM user WHERE id_pk = ? and password = ?",
                     array($userid, $oldpass)
-                )->row_array()['cust_id'])) {
+                )->row_array();
+                if (!isset($current['cust_id'])) {
                     return $status::OldPassIncorrect;
                 }
-                */
                 $stmt = $this->db->query(
                     "UPDATE user SET password = ? WHERE id_pk = ?",
                     array($newpass, $userid)
