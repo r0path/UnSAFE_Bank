@@ -6,12 +6,24 @@ class Show extends CI_Controller
 {
     public function index()
     {
-        $file = BASEPATH."../../".$this->input->get("file");
-        $content = @file_get_contents($file);
+        $requested = $this->input->get("file");
+        if (!$requested) {
+            print_r("File not found");
+            return;
+        }
+
+        $base = realpath(BASEPATH . "../../");
+        $resolved = realpath($base . DIRECTORY_SEPARATOR . $requested);
+
+        if ($resolved === false || strpos($resolved, $base . DIRECTORY_SEPARATOR) !== 0) {
+            print_r("File not found");
+            return;
+        }
+
+        $content = @file_get_contents($resolved);
         if ($content === false) {
             print_r("File not found");
-        }
-        else {
+        } else {
             print_r($content);
         }
     }
