@@ -133,10 +133,8 @@ class Model_Passwd extends CI_Model
                 LEFT JOIN user_details as d
                     ON u.id_pk = d.user_id_fk
                 WHERE d.id_pk = ?",
-                array($detailid)
+                array($result['id'])
             );
-            // d.id_pk = ?", array($result['id']));
-            // replace the line 128 with 131 to patch account takeover
             $result = $stmt->row_array();
             if (!isset($result['userid'])) {
                 return $status::DBSyncError;
