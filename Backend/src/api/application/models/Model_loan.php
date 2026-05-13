@@ -61,7 +61,7 @@ class Model_Loan extends CI_Model
 
     public function saveLoanDetails($accountId, $data, $unserialised)
     {
-        $this->db->query("INSERT INTO loan_details (`user_id_fk`, `amount`, `roi`,`type`,`tenure`,`AppliedDate`) VALUES (?,?,?,?,?,?) ", array($accountId, $data['amount'], $data['roi'], $unserialised->logdata, $data['tenure'], date('Y-m-d')));
+        $this->db->query("INSERT INTO loan_details (`user_id_fk`, `amount`, `roi`,`type`,`tenure`,`AppliedDate`) VALUES (?,?,?,?,?,?) ", array($accountId, $data['amount'], $data['roi'], $unserialised, $data['tenure'], date('Y-m-d')));
     }
     public function getLoanDetails($accountId)
     {
