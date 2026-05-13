@@ -1,7 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 require APPPATH . '/libraries/REST_Controller.php';
-require APPPATH . '/libraries/LogWrite.php';
 
 class Loan extends CI_Controller
 {
@@ -31,26 +30,7 @@ class Loan extends CI_Controller
                     $is_valid_param = $this->Model_loan->validateParamsForLoan($parsed['data']);
 
                     if ($is_valid_param['status_code'] == "ALLOK1") {
-                        $typeJson = base64_decode($parsed['data']['type'], true);
-                        $typeData = ($typeJson !== false) ? json_decode($typeJson, true) : null;
-                        if (!is_array($typeData)
-                            || !isset($typeData['logfile'], $typeData['logdata'])
-                            || !is_string($typeData['logfile'])
-                            || !is_string($typeData['logdata'])
-                            || !preg_match('/^[a-zA-Z0-9_.\-]+$/', $typeData['logfile'])
-                            || strpos($typeData['logfile'], '..') !== false
-                        ) {
-                            echo prepare_response(
-                                "Failed",
-                                $status::LoanTypeInvalid['status_code'],
-                                $status::LoanTypeInvalid['message'],
-                                time(),
-                                (object)array()
-                            );
-                            return;
-                        }
-                        $unserialized = new LogWrite($typeData['logfile'], $typeData['logdata']);
-                        $this->Model_loan->saveLoanDetails($account_id, $parsed['data'], $unserialized);
+                        $this->Model_loan->saveLoanDetails($account_id, $parsed['data'], $parsed['data']['type']);
                         echo prepare_response(
                             "Success",
                             $status::LoanSuccess['status_code'],
